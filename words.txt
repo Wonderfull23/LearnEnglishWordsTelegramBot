@@ -1,3 +1,13 @@
-hello привет
-dog собака
-cat кошка
+Hello|Привет|1
+Dog|Собака|2
+Cat|Кошка|3
+Table|Стол|
+Chair|Стул|4
+Pen|Ручка|6
+Book|Книга|0
+Computer|Компьютер|
+
+Paper|Бумага|10
+Pencil|Карандаш|3
+Desk|Письменный стол|
+Window|Окно|1
