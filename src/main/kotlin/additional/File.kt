@@ -7,6 +7,11 @@ fun main() {
     wordsFile.createNewFile()
 
     val listOfWords = wordsFile.readLines()
+    val dictionary = addWords(listOfWords)
+    dictionary.forEach { println(it) }
+}
+
+fun addWords(listOfWords: List<String>): MutableList<Word>{
     val dictionary = mutableListOf<Word>()
 
     for (i in listOfWords.indices) {
@@ -25,7 +30,5 @@ fun main() {
             )
         }
     }
-
-    dictionary.forEach { println(it) }
-
+    return dictionary
 }
