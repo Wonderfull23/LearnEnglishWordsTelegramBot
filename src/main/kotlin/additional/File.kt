@@ -7,28 +7,22 @@ fun main() {
     wordsFile.createNewFile()
 
     val listOfWords = wordsFile.readLines()
-    val dictionary = addWords(listOfWords)
-    dictionary.forEach { println(it) }
+    createDirectory(listOfWords).forEach { println(it) }
 }
 
-fun addWords(listOfWords: List<String>): MutableList<Word>{
+fun createDirectory(listOfWords: List<String>): MutableList<Word> {
     val dictionary = mutableListOf<Word>()
 
-    for (i in listOfWords.indices) {
-        val wordParameters = listOfWords[i].split("|")
-        if (wordParameters.size > 1) {
+    for (i in listOfWords) {
+        val wordParameters = i.split("|")
+        if (wordParameters.size > 1)
             dictionary.add(
                 Word(
-                    original = wordParameters[0] ?: " ", // тут не уверен, проверяется ли на null
-                    translate = wordParameters[1] ?: " ", // тут не уверен, проверяется ли на null
-                    correctAnswersCount = try {
-                        wordParameters[2].toInt()
-                    } catch (e: NumberFormatException) {
-                        0
-                    }
+                    original = wordParameters[0],
+                    translate = wordParameters[1],
+                    correctAnswersCount = wordParameters[2].toIntOrNull() ?: 0
                 )
             )
-        }
     }
     return dictionary
 }
