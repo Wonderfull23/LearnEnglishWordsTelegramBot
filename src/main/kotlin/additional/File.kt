@@ -7,8 +7,10 @@ fun main() {
     wordsFile.createNewFile()
 
     val listOfWords = wordsFile.readLines()
-    createDirectory(listOfWords).forEach { println(it) }
+    val directory = createDirectory(listOfWords)
+    menu(directory)
 }
+
 
 fun createDirectory(listOfWords: List<String>): MutableList<Word> {
     val dictionary = mutableListOf<Word>()
@@ -26,3 +28,26 @@ fun createDirectory(listOfWords: List<String>): MutableList<Word> {
     }
     return dictionary
 }
+
+fun menu(directory: MutableList<Word>) {
+    while (true) {
+        println("Меню:\n1 – Учить слова\n2 – Статистика\n0 – Выход")
+        when (readln()) {
+            "1" -> TODO("Тут будет реализация логики по изучению слов")
+            "2" -> {
+                val learnedWords = directory.filter { it.correctAnswersCount!! > 3 }
+                // по идее можно заменить val learnedWords =
+                // directory.filter { it.correctAnswersCount?.let { count -> count > 3 } ?: false }
+                //чтобы не использовать !!
+                println(
+                    "Выучено ${learnedWords.size} из ${directory.size} слов " +
+                            "| ${learnedWords.size * 100 / directory.size}%"
+                )
+            }
+
+            "0" -> break
+            else -> println("Неверно введенный номер пукта")
+        }
+    }
+}
+
