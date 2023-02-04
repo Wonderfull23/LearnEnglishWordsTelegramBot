@@ -32,7 +32,24 @@ fun menu(dictionary: MutableList<Word>) {
     while (true) {
         println("Меню:\n1 – Учить слова\n2 – Статистика\n0 – Выход")
         when (readln()) {
-            "1" -> TODO("Тут будет реализация логики по изучению слов")
+            "1" -> {
+                while (true) {
+                    println("Хотите выучить новое слово?")
+                    if (readln() == "Да".lowercase()) {
+                        val unlearnedWords = dictionary.filter { it.correctAnswersCount < 3 }
+                        if (unlearnedWords.isEmpty()) {
+                            println("Вы выучили все слова")
+                            break
+                        } else {
+                            val randomWords = unlearnedWords.shuffled().take(4)
+                            val word = randomWords.random().original
+                            println("Выберите правильный перевод слова $word")
+                            randomWords.forEach { println("${randomWords.indexOf(it) + 1}. ${it.translate}") }
+                        }
+                    } else break
+                }
+            }
+
             "2" -> {
                 val learned = dictionary.filter { it.correctAnswersCount > 3 }.size
                 val total = dictionary.size
