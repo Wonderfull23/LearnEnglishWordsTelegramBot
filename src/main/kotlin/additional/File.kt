@@ -45,10 +45,8 @@ fun menu(dictionary: MutableList<Word>) {
 
                 val word = randomWords.filter { it.correctAnswersCount < 3 }.random().original
                 println(word)
-                for (i in randomWords.indices) {
-                    if (i == randomWords.size - 1) println("$i - ${randomWords[i].translate}")
-                    else print("$i - ${randomWords[i].translate}, ")
-                }
+                randomWords.forEachIndexed { index, randomWord -> print("$index - ${randomWord.translate}" +
+                        if (index != randomWords.lastIndex) ", " else "\n") }
             }
 
             "2" -> {
