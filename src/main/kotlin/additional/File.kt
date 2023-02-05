@@ -30,23 +30,24 @@ fun createDirectory(listOfWords: List<String>): MutableList<Word> {
 
 fun menu(dictionary: MutableList<Word>) {
     while (true) {
+        val answerVariants = 4
         println("Меню:\n1 – Учить слова\n2 – Статистика\n0 – Выход")
         when (readln()) {
             "1" -> {
-                while (true) {
-                    println("Хотите выучить новое слово?")
-                    if (readln() == "Да".lowercase()) {
-                        val unlearnedWords = dictionary.filter { it.correctAnswersCount < 3 }
-                        if (unlearnedWords.isEmpty()) {
-                            println("Вы выучили все слова")
-                            break
-                        } else {
-                            val randomWords = unlearnedWords.shuffled().take(4)
-                            val word = randomWords.random().original
-                            println("Выберите правильный перевод слова $word")
-                            randomWords.forEach { println("${randomWords.indexOf(it) + 1}. ${it.translate}") }
-                        }
-                    } else break
+                val randomWords =
+                    dictionary.filter { it.correctAnswersCount < 3 }.shuffled().take(answerVariants).toMutableList()
+                if (randomWords.isEmpty()) {
+                    println("Вы выучили все слова")
+                    break
+                } else if (randomWords.size < answerVariants)
+                    randomWords += dictionary.filter { it.correctAnswersCount > 3 }.shuffled()
+                        .take(answerVariants - randomWords.size)
+
+                val word = randomWords.filter { it.correctAnswersCount < 3 }.random().original
+                println(word)
+                for (i in randomWords.indices) {
+                    if (i == randomWords.size - 1) println("$i - ${randomWords[i].translate}")
+                    else print("$i - ${randomWords[i].translate}, ")
                 }
             }
 
