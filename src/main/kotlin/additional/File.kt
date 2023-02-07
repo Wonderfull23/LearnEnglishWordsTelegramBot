@@ -57,6 +57,7 @@ fun menu(dictionary: MutableList<Word>) {
                 }
 
                 val word = randomWords[randomWords.indexOfFirst { it.original == originalWord }]
+
                 when (readln()) {
                     "0" -> break
                     (randomWords.indexOf(word) + 1).toString() -> {
