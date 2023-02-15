@@ -40,7 +40,6 @@ fun showMenu(trainer: LearnWordsTrainer) {
                     question.printQuestion()
                     val userInput = readln()
                     if (userInput == "0") break
-                    trainer.checkAnswer(question, userInput)
                     if (trainer.checkAnswer(question, userInput)) println("Правильно!")
                     else println("Неправильно - слово ${question.correctAnswer.translate}")
                 }
