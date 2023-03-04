@@ -1,12 +1,19 @@
 package additional
 
 import java.io.File
-
-class Statistics(
+data class Word(
+    val original: String,
+    val translate: String,
+    var correctAnswersCount: Int = 0
+)
+data class Statistics(
     val learned: Int,
     val total: Int,
     val percent: Int,
-)
+) {
+    override fun toString(): String = "Выучено $learned из $total слов | $percent%"
+
+}
 
 data class Question(
     var variants: List<Word>,
@@ -17,6 +24,7 @@ class LearnWordsTrainer(private val learnedAnswerCount: Int = 3, private val cou
     private val wordsFile = File("words.txt")
     private val listOfWords = wordsFile.readLines()
     private val dictionary = createDirectory()
+    var lastQuestion: Question? = null
 
     fun getStatistics(): Statistics {
         val learned = dictionary.filter { it.correctAnswersCount >= learnedAnswerCount }.size
@@ -39,8 +47,8 @@ class LearnWordsTrainer(private val learnedAnswerCount: Int = 3, private val cou
         return Question(variants, correctAnswer)
     }
 
-    fun checkAnswer(question: Question, userInput: String): Boolean {
-        return if (userInput == question.variants.indexOf(question.correctAnswer).plus(1).toString()) {
+    fun checkAnswer(question: Question?, userInput: Int): Boolean {
+        return if (userInput == question?.variants?.indexOf(question.correctAnswer)?.plus(1)) {
             question.correctAnswer.correctAnswersCount++
             saveDictionary(dictionary)
             true
