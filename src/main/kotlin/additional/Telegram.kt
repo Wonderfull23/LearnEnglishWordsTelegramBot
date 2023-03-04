@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
     }
 
     val botToken = args[0]
-    var updateId = "0"
+    var updateId = 0
 
     val updateIdIdRegex = "\"update_id\":(\\d+?),".toRegex()
     val chatIdRegex = "\"chat\":\\{\"id\":(\\d+?),".toRegex()
@@ -24,21 +24,20 @@ fun main(args: Array<String>) {
         println(updates)
         val updateIdString = updateIdIdRegex.find(updates)?.groups?.get(1)?.value
         if (updateIdString != null) println(updateIdString)
-        updateId = (((updateIdString?.toInt() ?: (updateId.toInt() - 1)) + 1).toString())
+        updateId = (((updateIdString?.toInt() ?: (updateId - 1)) + 1))
         val chatId = chatIdRegex.find(updates)?.groups?.get(1)?.value
         val text = textRegex.find(updates)?.groups?.get(1)?.value
         val data = dataRegex.find(updates)?.groups?.get(1)?.value
-        if (text?.lowercase() == "/start") bot.sendMenu(botToken, chatId)
-        if (data?.lowercase() == statistics) {
+        if (text == "/start") bot.sendMenu(botToken, chatId)
+        if (data == STATISTICS) {
             bot.sendMessage(botToken, chatId, trainer.getStatistics().toString())
             bot.sendMenu(botToken, chatId)
-        } else if (data == learnWords) {
-            trainer.lastQuestion = checkNextQuestionAndSend(trainer, botToken, chatId)
-        }
-        else if (data != null && startsWith(data, CALLBACK_DATA_ANSWER_PREFIX)) {
+        } else if (data == LEARN_WORDS) {
+            checkNextQuestionAndSend(trainer, botToken, chatId)
+        } else if (data?.startsWith(CALLBACK_DATA_ANSWER_PREFIX) == true) {
             val index = data.substringAfter(CALLBACK_DATA_ANSWER_PREFIX).toInt()
 
-            if (trainer.lastQuestion != null && trainer.checkAnswer(trainer.lastQuestion!!, index + 1))
+            if (trainer.lastQuestion?.let { trainer.checkAnswer(it, index + 1) } == true)
                 bot.sendMessage(botToken, chatId, "Правильно")
             else
                 bot.sendMessage(
@@ -46,7 +45,7 @@ fun main(args: Array<String>) {
                     chatId,
                     "Не правильно: ${trainer.lastQuestion?.correctAnswer?.original} - ${trainer.lastQuestion?.correctAnswer?.translate}"
                 )
-                trainer.lastQuestion = checkNextQuestionAndSend(trainer, botToken, chatId)
+            trainer.lastQuestion = checkNextQuestionAndSend(trainer, botToken, chatId)
         }
 
     }
@@ -63,8 +62,6 @@ fun checkNextQuestionAndSend(trainer: LearnWordsTrainer, botToken: String, chatI
     return question
 }
 
-fun startsWith(str: String?, prefix: String): Boolean {
-    return str?.startsWith(prefix) == true
-}
+
 
 

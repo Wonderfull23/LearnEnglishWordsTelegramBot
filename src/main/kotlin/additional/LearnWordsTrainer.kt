@@ -1,11 +1,13 @@
 package additional
 
 import java.io.File
+
 data class Word(
     val original: String,
     val translate: String,
     var correctAnswersCount: Int = 0
 )
+
 data class Statistics(
     val learned: Int,
     val total: Int,
@@ -26,6 +28,7 @@ class LearnWordsTrainer(private val learnedAnswerCount: Int = 3, private val cou
     private val dictionary = createDirectory()
     var lastQuestion: Question? = null
 
+
     fun getStatistics(): Statistics {
         val learned = dictionary.filter { it.correctAnswersCount >= learnedAnswerCount }.size
         val total = dictionary.size
@@ -44,6 +47,7 @@ class LearnWordsTrainer(private val learnedAnswerCount: Int = 3, private val cou
         }
         val correctAnswer =
             variants.filter { it.correctAnswersCount < learnedAnswerCount }.random()
+        lastQuestion = Question(variants, correctAnswer)
         return Question(variants, correctAnswer)
     }
 

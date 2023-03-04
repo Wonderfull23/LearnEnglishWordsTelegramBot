@@ -1,13 +1,12 @@
-Dog|Собака|3
-Hello|Привет|3
-Cat|Кошка|3
-Table|Стол|3
-Chair|Стул|3
-Pen|Ручка|4
-Book|Книга|1
-Computer|Компьютер|1
+Dog|Собака|1
+Hello|Привет|2
+Cat|Кошка|1
+Table|Стол|0
+Chair|Стул|1
+Pen|Ручка|2
+Book|Книга|0
+Computer|Компьютер|3
 Paper|Бумага|3
-Pencil|Карандаш|1
-Desk|Письменный стол|8
-Window|Окно|11
-Human|Человек|22
+Pencil|Карандаш|0
+Window|Окно|2
+Human|Человек|0

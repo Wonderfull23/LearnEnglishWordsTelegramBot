@@ -8,13 +8,13 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.charset.StandardCharsets
 
-const val statistics = "statistics_clicked"
-const val learnWords = "learn_words_clicked"
+const val STATISTICS = "statistics_clicked"
+const val LEARN_WORDS = "learn_words_clicked"
 const val CALLBACK_DATA_ANSWER_PREFIX = "answer_"
 
 class TelegramBotService {
     private val client: HttpClient = HttpClient.newBuilder().build()
-    fun getUpdates(botToken: String, updateId: String?): String {
+    fun getUpdates(botToken: String, updateId: Int): String {
         val urlGetUpdates = "https://api.telegram.org/bot$botToken/getUpdates?offset=$updateId"
         val request: HttpRequest = HttpRequest.newBuilder().uri(URI.create(urlGetUpdates)).build()
         val response: HttpResponse<String> = client.send(request, HttpResponse.BodyHandlers.ofString())
@@ -45,11 +45,11 @@ class TelegramBotService {
                         [
                             {
                                 "text": "Изучить слова",
-                                "callback_data": "$learnWords"
+                                "callback_data": "$LEARN_WORDS"
                             },
                             {
                                 "text": "Статистика",
-                                "callback_data": "$statistics"
+                                "callback_data": "$STATISTICS"
                             }
                         ]
                     ]
@@ -67,22 +67,14 @@ class TelegramBotService {
 
     fun sendQuestion(botToken: String, chatId: String?, question: Question?): String? {
         val urlSendMessage = "https://api.telegram.org/bot$botToken/sendMessage"
-        var answers = ""
-        question?.variants?.forEachIndexed { index, word ->
-            answers += if (index != question.variants.lastIndex)
-                """
-                                    {
-                                        "text": "${word.translate}",
-                                        "callback_data": "$CALLBACK_DATA_ANSWER_PREFIX$index"
-                                    },
-                        """.trimEnd()
-            else """
-                                    {
-                                        "text": "${word.translate}",
-                                        "callback_data": "$CALLBACK_DATA_ANSWER_PREFIX$index"
-                                    }
-                        """.trimEnd()
+        val answers = question?.variants?.mapIndexed { index, word ->
+            """
+        {
+            "text": "${word.translate}",
+            "callback_data": "$CALLBACK_DATA_ANSWER_PREFIX$index"
         }
+        """.trimIndent()
+        }?.joinToString(separator = ",")
         val sendAnswersBody = """
             {
                 "chat_id": $chatId,
@@ -90,7 +82,7 @@ class TelegramBotService {
                 "reply_markup": {
                     "inline_keyboard": [
                         [
-                            ${answers.trimStart()}
+                            ${answers?.trimStart()}
                         ]
                     ]
                 }
