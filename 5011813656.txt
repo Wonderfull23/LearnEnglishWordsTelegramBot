@@ -1,0 +1,13 @@
+Dog|Собака|0
+Hello|Привет|0
+Cat|Кот|1
+Table|Стол|2
+Chair|Стул|1
+Pen|Ручка|0
+Book|Книга|2
+Computer|Компьютер|1
+Paper|Бумага|3
+Pencil|Карандаш|1
+Window|Окно|0
+Human|Человек|2
+Coin|Монета|1

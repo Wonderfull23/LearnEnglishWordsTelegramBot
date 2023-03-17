@@ -1,7 +1,9 @@
-package additional
-
+import kotlinx.serialization.Serializable
 import java.io.File
+import java.lang.IllegalStateException
+import java.lang.IndexOutOfBoundsException
 
+@Serializable
 data class Word(
     val original: String,
     val translate: String,
@@ -22,11 +24,14 @@ data class Question(
     val correctAnswer: Word,
 )
 
-class LearnWordsTrainer(private val learnedAnswerCount: Int = 3, private val countOfQuestionWords: Int = 4) {
-    private val wordsFile = File("words.txt")
-    private val listOfWords = wordsFile.readLines()
-    private val dictionary = createDirectory()
+class LearnWordsTrainer(
+    private val fileName: String = "words.txt",
+    private val learnedAnswerCount: Int = 3,
+    private val countOfQuestionWords: Int = 4) {
+
+    private val wordsFile = File(fileName)
     var lastQuestion: Question? = null
+    private val dictionary = createDirectory()
 
 
     fun getStatistics(): Statistics {
@@ -54,32 +59,39 @@ class LearnWordsTrainer(private val learnedAnswerCount: Int = 3, private val cou
     fun checkAnswer(question: Question?, userInput: Int): Boolean {
         return if (userInput == question?.variants?.indexOf(question.correctAnswer)?.plus(1)) {
             question.correctAnswer.correctAnswersCount++
-            saveDictionary(dictionary)
+            saveDictionary()
             true
         } else false
     }
 
     private fun createDirectory(): List<Word> {
-        val dictionary = mutableListOf<Word>()
-        for (i in listOfWords) {
-            val wordParameters = i.split("|")
-            dictionary.add(
-                Word(
-                    original = wordParameters[0],
-                    translate = wordParameters[1],
-                    correctAnswersCount = wordParameters[2].toIntOrNull() ?: 0
-                )
-            )
+        try {
+            val wordsFile = File(fileName)
+            if (!wordsFile.exists()) {
+                File("words.txt").copyTo(wordsFile)
+            }
+            val dictionary = mutableListOf<Word>()
+            wordsFile.readLines().forEach(){
+                val splitLine = it.split("|")
+                dictionary.add(Word(splitLine[0], splitLine[1], splitLine[2].toIntOrNull() ?: 0))
+            }
+            return dictionary
+        } catch (e: IndexOutOfBoundsException) {
+            throw IllegalStateException ("некорректный файл")
         }
-        return dictionary
     }
 
-    private fun saveDictionary(dictionary: List<Word>) {
-        val wordsFile = File("words.txt")
+    private fun saveDictionary() {
+        val wordsFile = File(fileName)
         wordsFile.writeText("")
         for (word in dictionary)
             wordsFile.appendText("${word.original}|${word.translate}|${word.correctAnswersCount}\n")
     }
+    fun resetProgress() {
+        dictionary.forEach{it.correctAnswersCount = 0}
+        saveDictionary()
+    }
+
 }
 
 
